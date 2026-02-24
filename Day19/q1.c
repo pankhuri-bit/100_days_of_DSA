@@ -1,28 +1,53 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <limits.h>
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
 
-int maxSubarraySumCircular(int* nums, int numsSize) {
-    int totalSum = 0;
-    int currMax = 0, maxSum = nums[0];
-    int currMin = 0, minSum = nums[0];
+void findClosestToZero(int arr[], int n) {
+    if (n < 2) return;
 
-    for (int i = 0; i < numsSize; i++) {
-        int x = nums[i];
+    qsort(arr, n, sizeof(int), compare);
 
-        currMax = MAX(x, currMax + x);
-        maxSum = MAX(maxSum, currMax);
+    int left = 0;
+    int right = n - 1;
+    int min_sum = INT_MAX;
+    int res_l = left, res_r = right;
 
-        currMin = MIN(x, currMin + x);
-        minSum = MIN(minSum, currMin);
+    while (left < right) {
+        int sum = arr[left] + arr[right];
 
-        totalSum += x;
+        if (abs(sum) < abs(min_sum)) {
+            min_sum = sum;
+            res_l = left;
+            res_r = right;
+        }
+
+        if (sum < 0) {
+            left++;
+        } else if (sum > 0) {
+            right--;
+        } else {
+            break;
+        }
     }
 
-    if (maxSum < 0) {
-        return maxSum;
+    printf("%d %d\n", arr[res_l], arr[res_r]);
+}
+
+int main() {
+    int n;
+    if (scanf("%d", &n) != 1) return 0;
+
+    int arr[n];
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
     }
 
-    return MAX(maxSum, totalSum - minSum);
+    findClosestToZero(arr, n);
+
+    return 0;
 }
